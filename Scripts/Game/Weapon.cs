@@ -5,6 +5,8 @@
 
 public class Weapon : MonoBehaviour
 {
+    private const int WEAPON_DAMAGE = 1;
+
     private BoxCollider2D _collider;
 
     private void Start()
@@ -17,7 +19,7 @@ public class Weapon : MonoBehaviour
         if (collision.transform.parent.GetComponent<IDamageable>() != null)
         {
             IDamageable damageable = collision.transform.parent.GetComponent<IDamageable>();
-            damageable.GetDamage(1);
+            damageable.ReceiveDamage(WEAPON_DAMAGE);
 
             SetColliderEnabled(false);
         }

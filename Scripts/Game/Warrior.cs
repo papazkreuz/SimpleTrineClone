@@ -3,32 +3,32 @@ using UnityEngine;
 
 public class Warrior : Character
 {
-    [SerializeField] private GameObject warriorWeaponPrefab;
-    private Weapon weapon;
+    private const float WEAPON_STRIKE_RANGE = 4f;
+    private const float WEAPON_STRIKE_SPEED = 20f;
+
+    private GameObject _warriorWeaponPrefab;
+    private Weapon _weapon;
 
     private Coroutine weaponStrikeAnimation;
 
-    private readonly float weaponStrikeRange = 4.0f;
-    private readonly float weaponStrikeSpeed = 20f;
-
     private IEnumerator WeaponStrikeAnimation(Vector3 targetPosition)
     {
-        weapon.SetColliderEnabled(true);
-        weapon.transform.right = targetPosition - weapon.transform.position;
+        _weapon.SetColliderEnabled(true);
+        _weapon.transform.right = targetPosition - _weapon.transform.position;
 
-        while (Vector3.Distance(weapon.transform.localPosition, Vector3.zero) < weaponStrikeRange)
+        while (Vector3.Distance(_weapon.transform.localPosition, Vector3.zero) < WEAPON_STRIKE_RANGE)
         {
-            weapon.transform.localPosition += weapon.transform.right * Time.deltaTime * weaponStrikeSpeed;
+            _weapon.transform.localPosition += _weapon.transform.right * Time.deltaTime * WEAPON_STRIKE_SPEED;
             yield return null;
         }
 
-        while (weapon.transform.localPosition != Vector3.zero)
+        while (_weapon.transform.localPosition != Vector3.zero)
         {
-            weapon.transform.localPosition = Vector3.MoveTowards(weapon.transform.localPosition, Vector3.zero, Time.deltaTime * weaponStrikeSpeed);
+            _weapon.transform.localPosition = Vector3.MoveTowards(_weapon.transform.localPosition, Vector3.zero, Time.deltaTime * WEAPON_STRIKE_SPEED);
             yield return null;
         }
 
-        weapon.SetColliderEnabled(false);
+        _weapon.SetColliderEnabled(false);
         weaponStrikeAnimation = null;
         yield break;
     }
@@ -39,16 +39,20 @@ public class Warrior : Character
 
         characterClass = CharacterClass.Warrior;
 
-        _spriteRenderer.color = Color.red;
+        SetSpriteColor(Color.red);
 
-        GameObject weaponGO = Instantiate(warriorWeaponPrefab, transform);
-        weaponGO.name = warriorWeaponPrefab.name;
-        weapon = weaponGO.GetComponent<Weapon>();
+        _warriorWeaponPrefab = Resources.Load<GameObject>("Prefabs/Weapon");
+
+        GameObject weaponGO = Instantiate(_warriorWeaponPrefab, transform);
+        weaponGO.name = _warriorWeaponPrefab.name;
+        _weapon = weaponGO.GetComponent<Weapon>();
     }
 
     public void WeaponStrike(Vector3 targetPosition)
     {
         if (weaponStrikeAnimation == null)
+        {
             weaponStrikeAnimation = StartCoroutine(WeaponStrikeAnimation(targetPosition));
+        }
     }
 }

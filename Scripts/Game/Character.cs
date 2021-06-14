@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
 [RequireComponent(typeof(BoxCollider2D))]
@@ -6,35 +7,36 @@
 
 public abstract class Character : MonoBehaviour
 {
-    protected enum CharacterClass
-    {
-        Mage,
-        Rogue,
-        Warrior
-    }
+    private const float JUMP_FORCE = 400f;
+    private readonly Vector2 jumpDirection = Vector2.up;
 
-    protected SpriteRenderer _spriteRenderer;
+    private SpriteRenderer _spriteRenderer;
     private BoxCollider2D _collider;
     private Rigidbody2D _rigidbody;
 
-    protected float moveSpeed = 2f;
-    private float jumpForce = 400f;
-
-    protected int maxJumpsCount = 1;
-
-    private int currentJumpCount;
-    private bool isGrounded;
-
     protected CharacterClass characterClass;
+    protected float moveSpeed = 2f;
+    protected int maxJumpsCount = 1;
+    
+    private int _currentJumpCount;
+    private bool _isGrounded;
 
-    private readonly Vector2 jumpDirection = Vector2.up;
+    public event Action OnCharacterFinishedEvent;
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.GetComponent<Finish>() != null)
+        {
+            OnCharacterFinishedEvent?.Invoke();
+        }
+    }
 
     protected virtual void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.GetComponent<Ground>() != null)
         {
-            isGrounded = true;
-            currentJumpCount = maxJumpsCount;
+            _isGrounded = true;
+            _currentJumpCount = 0;
         }
     }
 
@@ -42,7 +44,7 @@ public abstract class Character : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<Ground>() != null)
         {
-            isGrounded = false;
+            _isGrounded = false;
         }
     }
 
@@ -53,6 +55,11 @@ public abstract class Character : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
+    protected void SetSpriteColor(Color color)
+    {
+        _spriteRenderer.color = color;
+    }
+
     public void Move(Vector3 direction)
     {
         transform.localPosition += direction * moveSpeed * Time.deltaTime;
@@ -60,11 +67,11 @@ public abstract class Character : MonoBehaviour
 
     public void Jump()
     {
-        if (currentJumpCount > 0)
+        if (_currentJumpCount < maxJumpsCount)
         {
             _rigidbody.velocity = new Vector2(_rigidbody.velocity.x, 0f);
-            _rigidbody.AddForce(jumpDirection * jumpForce);
-            currentJumpCount--;
+            _rigidbody.AddForce(jumpDirection * JUMP_FORCE);
+            _currentJumpCount++;
         }
     }
 

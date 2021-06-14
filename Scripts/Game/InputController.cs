@@ -2,42 +2,38 @@
 
 public class InputController : MonoBehaviour
 {
-    private Character character;
+    private Character _character;
 
     private void Start()
     {
-        character = FindObjectOfType<Character>();
+        _character = FindObjectOfType<Character>();
+        _character.OnCharacterFinishedEvent += Disable;
     }
 
     private void Update()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            character.Move(Vector3.left);
+            _character.Move(Vector3.left);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
-            character.Move(Vector3.right);
+            _character.Move(Vector3.right);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            character.Jump();
+            _character.Jump();
         }
 
-        if (character.IsMage)
+        if (Input.GetMouseButtonDown(0))
         {
-            Mage mage = character.GetComponent<Mage>();
-
-            if (Input.GetMouseButtonDown(0))
+            if (_character.IsMage)
             {
-                Vector3 clickScreenPosition = Input.mousePosition;
-                Vector3 clickWorldPosition = Camera.main.ScreenToWorldPoint(clickScreenPosition);
-                Vector2 rayPosition = new Vector2(clickWorldPosition.x, clickWorldPosition.y);
+                Mage mage = _character.GetComponent<Mage>();
 
-                RaycastHit2D hit = Physics2D.Raycast(rayPosition, Vector2.zero);
-
+                RaycastHit2D hit = Physics2D.Raycast(GetMouseWorldPosition(), Vector2.zero);
                 if (hit)
                 {
                     if (hit.transform.parent.GetComponent<ILevitatable>() != null)
@@ -47,20 +43,26 @@ public class InputController : MonoBehaviour
                     }
                 }
             }
-        }
 
-        if (character.IsWarrior)
-        {
-            Warrior warrior = character.GetComponent<Warrior>();
-
-            if (Input.GetMouseButtonDown(0))
+            if (_character.IsWarrior)
             {
-                Vector3 clickScreenPosition = Input.mousePosition;
-                Vector3 clickWorldPosition = Camera.main.ScreenToWorldPoint(clickScreenPosition);
-                clickWorldPosition = new Vector3(clickWorldPosition.x, clickWorldPosition.y); // set Z axis to 0
+                Warrior warrior = _character.GetComponent<Warrior>();
 
-                warrior.WeaponStrike(clickWorldPosition);
+                warrior.WeaponStrike(GetMouseWorldPosition());
             }
         }
+    }
+
+    private Vector3 GetMouseWorldPosition()
+    {
+        Vector3 clickScreenPosition = Input.mousePosition;
+        Vector3 clickWorldPosition = Camera.main.ScreenToWorldPoint(clickScreenPosition);
+        clickWorldPosition = new Vector3(clickWorldPosition.x, clickWorldPosition.y); // set Z axis to 0
+        return clickWorldPosition;
+    }
+
+    private void Disable()
+    {
+        this.enabled = false;
     }
 }

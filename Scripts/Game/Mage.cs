@@ -8,14 +8,18 @@ public class Mage : Character
 
         characterClass = CharacterClass.Mage;
 
-        _spriteRenderer.color = Color.blue;
+        SetSpriteColor(Color.blue);
     }
 
     public void ToggleObjectLevitation(ILevitatable levitatable)
     {
         if (levitatable.IsLevitating() == false)
+        {
             levitatable.Levitate();
+        }
         else
+        {
             levitatable.Fall();
+        }
     }
 }

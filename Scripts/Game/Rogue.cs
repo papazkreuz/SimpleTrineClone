@@ -11,6 +11,6 @@ public class Rogue : Character
         moveSpeed = 3.5f;
         maxJumpsCount = 2;
 
-        _spriteRenderer.color = Color.green;
+        SetSpriteColor(Color.green);
     }
 }

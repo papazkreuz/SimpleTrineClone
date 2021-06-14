@@ -6,40 +6,41 @@ using UnityEngine;
 
 public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
 {
-    private float health = 5;
-    private Vector3 scalePerHP;
+    private const float LEVITATION_HEIGHT = 3f;
+    private const float RAISING_SPEED = 3f;
+    private const float FLY_AMPLITUDE = 1f;
+    private const float FLY_FREQUENCY = 0.2f;
+    private const float FALLING_SPEED = 4f;
 
-    private Vector3 startPosition;
-    private Vector3 startScale;
+    [SerializeField] private float _health;
+    private Vector3 _scaleLossPerHP;
+
+    private Vector3 _startPosition;
+    private Vector3 _startScale;
 
     private Coroutine levitationCoroutine;
     private Coroutine fallingCoroutine;
 
-    private readonly float levitationHeight = 3f;
-
     private IEnumerator Levitation()
     {
-        Vector3 levitatePosition = startPosition + Vector3.up * levitationHeight;
-        float uppingSpeed = 3f;
+        Vector3 levitatePosition = _startPosition + Vector3.up * LEVITATION_HEIGHT;
 
         //Going up
         while (transform.position.y < levitatePosition.y)
         {
-            transform.position = Vector3.MoveTowards(transform.position, levitatePosition, uppingSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, levitatePosition, RAISING_SPEED * Time.deltaTime);
 
             yield return null;
         }
 
         transform.position = levitatePosition;
 
-        float flyFrequency = 1f;
-        float flyAmplitude = 0.2f;
         float startFlyingTime = Time.time;
 
         //Flying on top
         while (true)
         {
-            float newY = levitatePosition.y + Mathf.Sin((Time.time - startFlyingTime) * Mathf.PI * flyFrequency) * flyAmplitude;
+            float newY = levitatePosition.y + Mathf.Sin((Time.time - startFlyingTime) * Mathf.PI * FLY_FREQUENCY) * FLY_AMPLITUDE;
             Vector3 newPosition = new Vector3(transform.position.x, newY);
             transform.position = newPosition;
 
@@ -51,11 +52,9 @@ public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
 
     private IEnumerator Falling()
     {
-        float fallingSpeed = 4f;
-
-        while (transform.position.y > startPosition.y)
+        while (transform.position.y > _startPosition.y)
         {
-            transform.position = Vector3.MoveTowards(transform.position, startPosition, fallingSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, _startPosition, FALLING_SPEED * Time.deltaTime);
 
             yield return null;
         }
@@ -65,16 +64,16 @@ public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
 
     private void Start()
     {
-        startPosition = transform.position;
-        startScale = transform.localScale;
+        _startPosition = transform.position;
+        _startScale = transform.localScale;
 
-        if (health <= 0)
+        if (_health <= 0)
         {
             Break();
         }
         else
         {
-            scalePerHP = startScale / health;
+            _scaleLossPerHP = _startScale / _health;
         }
     }
 
@@ -106,15 +105,17 @@ public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
     }
 
     //IDamageable
-    public void GetDamage(int damage)
+    public void ReceiveDamage(int damage)
     {
         if (damage <= 0)
+        {
             throw new System.Exception("Damage can't be zero or negative");
+        }
 
-        health -= damage;
-        transform.localScale -= damage * scalePerHP;
+        _health -= damage;
+        transform.localScale -= damage * _scaleLossPerHP;
 
-        if (health <= 0) Break();
+        if (_health <= 0) Break();
     }
 
     public void Break()
@@ -122,5 +123,5 @@ public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
         Destroy(gameObject);
     }
 
-    public float Health => health;
+    public float Health => _health;
 }

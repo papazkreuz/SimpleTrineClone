@@ -1,5 +1,5 @@
 ﻿public interface IDamageable
 {
-    void GetDamage(int damage);
+    void ReceiveDamage(int damage);
     void Break();
 }
