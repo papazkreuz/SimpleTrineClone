@@ -69,7 +69,7 @@ namespace System.Collections.Generic
 
         public override string ToString()
         {
-            return String.Format("(Key: {0}, Value: {1})", _key, _value);
+            return String.Format($"(Key: {_key}, Value: {_value})");
         }
     }
 }

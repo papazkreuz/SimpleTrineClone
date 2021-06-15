@@ -57,7 +57,7 @@ public class InputController : MonoBehaviour
     {
         Vector3 clickScreenPosition = Input.mousePosition;
         Vector3 clickWorldPosition = Camera.main.ScreenToWorldPoint(clickScreenPosition);
-        clickWorldPosition = new Vector3(clickWorldPosition.x, clickWorldPosition.y); // set Z axis to 0
+        clickWorldPosition = new Vector3(clickWorldPosition.x, clickWorldPosition.y); // Set Z axis to 0
         return clickWorldPosition;
     }
 

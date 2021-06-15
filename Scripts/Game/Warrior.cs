@@ -9,7 +9,7 @@ public class Warrior : Character
     private GameObject _warriorWeaponPrefab;
     private Weapon _weapon;
 
-    private Coroutine weaponStrikeAnimation;
+    private Coroutine weaponStrikeAnimationCoroutine;
 
     private IEnumerator WeaponStrikeAnimation(Vector3 targetPosition)
     {
@@ -29,7 +29,7 @@ public class Warrior : Character
         }
 
         _weapon.SetColliderEnabled(false);
-        weaponStrikeAnimation = null;
+        weaponStrikeAnimationCoroutine = null;
         yield break;
     }
 
@@ -50,9 +50,9 @@ public class Warrior : Character
 
     public void WeaponStrike(Vector3 targetPosition)
     {
-        if (weaponStrikeAnimation == null)
+        if (weaponStrikeAnimationCoroutine == null)
         {
-            weaponStrikeAnimation = StartCoroutine(WeaponStrikeAnimation(targetPosition));
+            weaponStrikeAnimationCoroutine = StartCoroutine(WeaponStrikeAnimation(targetPosition));
         }
     }
 }

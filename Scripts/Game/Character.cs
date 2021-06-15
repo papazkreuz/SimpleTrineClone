@@ -19,7 +19,6 @@ public abstract class Character : MonoBehaviour
     protected int maxJumpsCount = 1;
     
     private int _currentJumpCount;
-    private bool _isGrounded;
 
     public event Action OnCharacterFinishedEvent;
 
@@ -35,16 +34,7 @@ public abstract class Character : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<Ground>() != null)
         {
-            _isGrounded = true;
             _currentJumpCount = 0;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.GetComponent<Ground>() != null)
-        {
-            _isGrounded = false;
         }
     }
 

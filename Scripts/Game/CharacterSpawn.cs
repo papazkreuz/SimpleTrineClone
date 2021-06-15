@@ -6,15 +6,15 @@ using UnityEngine;
 public class CharacterSpawn : MonoBehaviour
 {
     [SerializeField] private GameObject _characterPrefab;
-    private Dictionary<CharacterClass, Type> _characterTypes;
+    private readonly Dictionary<CharacterClass, Type> _characterTypes = new Dictionary<CharacterClass, Type>
+    {
+        { CharacterClass.Mage, typeof(Mage) },
+        { CharacterClass.Rogue, typeof(Rogue) },
+        { CharacterClass.Warrior, typeof(Warrior) }
+    };
 
     private void Start()
     {
-        _characterTypes = new Dictionary<CharacterClass, Type>();
-        _characterTypes.Add(CharacterClass.Mage, typeof(Mage));
-        _characterTypes.Add(CharacterClass.Rogue, typeof(Rogue));
-        _characterTypes.Add(CharacterClass.Warrior, typeof(Warrior));
-
         GameObject spawnedCharacter = Instantiate(_characterPrefab);
         spawnedCharacter.name = _characterPrefab.name;
 

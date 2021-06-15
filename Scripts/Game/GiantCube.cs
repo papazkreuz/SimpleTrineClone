@@ -122,6 +122,4 @@ public class GiantCube : MonoBehaviour, ILevitatable, IDamageable
     {
         Destroy(gameObject);
     }
-
-    public float Health => _health;
 }
